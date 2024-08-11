@@ -15,7 +15,7 @@ export default function Home() {
   const [errors, setErrors] = useState<string[]>([]);
   const [balances, setBalances] = useState<any>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [apiError, setApiError] = useState<string | null>(null); // New state for managing API errors
+  const [apiError, setApiError] = useState<string | null>(null);
 
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,8 +52,6 @@ export default function Home() {
       clearTimeout(handler);
     };
   }, [addressInput, errors]);
-
-
 
   const fetchBalances = async (addresses: string[]): Promise<any> => {
     try {
@@ -112,11 +110,14 @@ export default function Home() {
               {balances[key]?.balance?.data && (
                 <BalanceTable
                   balanceData={balances[key].balance.data}
-                  title={key}
+                  title={`${key} Balance`}
                 />
               )}
               {balances[key]?.nfts?.data && (
-                <NftTable nftData={balances[key].nfts.data} title={key} />
+                <NftTable
+                  nftData={balances[key].nfts.data}
+                  title={`${key} NFTs`}
+                />
               )}
             </div>
           ))}
