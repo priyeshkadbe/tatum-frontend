@@ -1,13 +1,13 @@
 "use client";
-import { BalanceTable } from "@/components/BalanceTable";
-import { InputForm } from "@/components/InputForm";
-import { Loader } from "@/components/Loader";
-import { NftTable } from "@/components/NftTable";
-import { API_URL, TITLE } from "@/constants";
+import { TITLE } from "@/constants";
 import axios from "axios";
 import { validate } from "bitcoin-address-validation";
 import { useCallback, useEffect, useState } from "react";
 import { isAddress } from "viem";
+import { BalanceTable } from "./BalanceTable";
+import { InputForm } from "./InputForm";
+import { Loader } from "./Loader";
+import { NftTable } from "./NftTable";
 
 export default function Home() {
   const [addressInput, setAddressInput] = useState<string>("");
@@ -15,7 +15,6 @@ export default function Home() {
   const [errors, setErrors] = useState<string[]>([]);
   const [balances, setBalances] = useState<any>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [apiError, setApiError] = useState<string | null>(null); // New state for managing API errors
 
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,47 +52,22 @@ export default function Home() {
     };
   }, [addressInput, errors]);
 
-  // const fetchBalances = async (addresses: string[]): Promise<any> => {
-  //   try {
-  //     setIsLoading(true);
-  //     setApiError(null); // Clear any previous error
-  //     const response = await axios.request({
-  //       method: "GET", // Use GET method as specified
-  //       url: API_URL,
-  //       data: {
-  //         addresses,
-  //       },
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //     });
-
-  //     return response.data;
-  //   } catch (error) {
-  //     console.error("Error fetching balances:", error);
-  //     setApiError("Please try again after some time. Something went wrong.");
-  //     throw error;
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-
   const fetchBalances = async (addresses: string[]): Promise<any> => {
     try {
       setIsLoading(true);
-      setApiError(null);
       const response = await axios.request({
         method: "POST",
-        url: API_URL,
+        url: "http://localhost:8000/api/v1/balances",
         data: {
           addresses,
         },
       });
 
+      console.log("API Response:", response.data);
       return response.data;
     } catch (error) {
       console.error("Error fetching balances:", error);
-      setApiError("Please try again after some time. Something went wrong.");
+      throw error;
     } finally {
       setIsLoading(false);
     }
@@ -127,19 +101,21 @@ export default function Home() {
         handleSubmit={handleSubmit}
       />
       {isLoading && <Loader />}
-      {apiError && <div className="text-red-500 mb-4">{apiError}</div>}
-      {balances && Object.keys(balances).length > 0 && (
+      {balances && (
         <>
           {Object.keys(balances).map((key) => (
             <div key={key}>
               {balances[key]?.balance?.data && (
                 <BalanceTable
                   balanceData={balances[key].balance.data}
-                  title={key}
+                  title={`${key} Balances`}
                 />
               )}
               {balances[key]?.nfts?.data && (
-                <NftTable nftData={balances[key].nfts.data} title={key} />
+                <NftTable
+                  nftData={balances[key].nfts.data}
+                  title={`${key} NFTs`}
+                />
               )}
             </div>
           ))}
