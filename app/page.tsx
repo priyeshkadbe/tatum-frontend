@@ -53,30 +53,7 @@ export default function Home() {
     };
   }, [addressInput, errors]);
 
-  // const fetchBalances = async (addresses: string[]): Promise<any> => {
-  //   try {
-  //     setIsLoading(true);
-  //     setApiError(null); // Clear any previous error
-  //     const response = await axios.request({
-  //       method: "GET", // Use GET method as specified
-  //       url: API_URL,
-  //       data: {
-  //         addresses,
-  //       },
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //     });
 
-  //     return response.data;
-  //   } catch (error) {
-  //     console.error("Error fetching balances:", error);
-  //     setApiError("Please try again after some time. Something went wrong.");
-  //     throw error;
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
 
   const fetchBalances = async (addresses: string[]): Promise<any> => {
     try {
